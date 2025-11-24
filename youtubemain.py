@@ -19,6 +19,8 @@ STANDING_SURFACE = pygame.transform.scale(pygame.image.load("assets/mario_standi
 JUMPING_SURFACE = pygame.transform.scale(pygame.image.load("assets/mario_jumping.png"), (48, 64))
 BACKGROUND = pygame.image.load("assets/background.png")
 
+bg_width = BACKGROUND.get_width()
+
 i = 0
 while True:
 
@@ -36,8 +38,12 @@ while True:
     elif keys_pressed[pygame.K_RIGHT]:
         i += 4 if keys_pressed[pygame.K_LSHIFT] else 1
     
-    bg_rect = BACKGROUND.get_rect(center=(400 - i, 400))
-    SCREEN.blit(BACKGROUND, bg_rect)
+    # While loop piirtää taustan kapeista suikaleista
+    # jotta voidaan scrollata left/right
+    x = -(i % bg_width)
+    while x < 800:
+        SCREEN.blit(BACKGROUND, (x, 0))
+        x += bg_width
     
     if jumping:
         Y_POSITION -= Y_VELOCITY
