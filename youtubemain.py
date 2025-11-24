@@ -16,6 +16,7 @@ JUMP_HEIGHT = 20
 Y_VELOCITY = JUMP_HEIGHT
 
 STANDING_SURFACE = pygame.transform.scale(pygame.image.load("assets/mario_standing.png"), (48, 64))
+start_rect = STANDING_SURFACE.get_rect(center=(X_POSITION, Y_POSITION))
 JUMPING_SURFACE = pygame.transform.scale(pygame.image.load("assets/mario_jumping.png"), (48, 64))
 BACKGROUND = pygame.image.load("assets/background.png")
 
@@ -33,6 +34,7 @@ while True:
 
     if keys_pressed[pygame.K_SPACE]:
         jumping = True
+        Y_VELOCITY = JUMP_HEIGHT
     elif keys_pressed[pygame.K_LEFT]:
         i -= 4 if keys_pressed[pygame.K_LSHIFT] else 1
     elif keys_pressed[pygame.K_RIGHT]:
@@ -48,12 +50,14 @@ while True:
     if jumping:
         Y_POSITION -= Y_VELOCITY
         Y_VELOCITY -= Y_GRAVITY
-        if Y_VELOCITY < -JUMP_HEIGHT:
+        if Y_POSITION > start_rect.bottom:
             jumping = False
-            Y_VELOCITY = JUMP_HEIGHT
     
-    mario_rect = STANDING_SURFACE.get_rect(center=(X_POSITION, Y_POSITION))
-    SCREEN.blit(STANDING_SURFACE, mario_rect)
+    if jumping:
+        mario_rect = JUMPING_SURFACE.get_rect(center=(X_POSITION, Y_POSITION))
+        SCREEN.blit(JUMPING_SURFACE, mario_rect)
+    else:
+        SCREEN.blit(STANDING_SURFACE, start_rect)
         
     pygame.display.update()
     CLOCK.tick(60)
