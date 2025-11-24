@@ -16,13 +16,14 @@ JUMP_HEIGHT = 20
 Y_VELOCITY = JUMP_HEIGHT
 
 STANDING_SURFACE = pygame.transform.scale(pygame.image.load("assets/mario_standing.png"), (48, 64))
+MARIO_RUNNING = pygame.transform.scale(pygame.image.load("assets/mario_running.png"), (48, 64))
 mario_rect = STANDING_SURFACE.get_rect(center=(X_POSITION, Y_POSITION))
 JUMPING_SURFACE = pygame.transform.scale(pygame.image.load("assets/mario_jumping.png"), (48, 64))
 BACKGROUND = pygame.image.load("assets/background.png")
 
 bg_width = BACKGROUND.get_width()
 
-i = 0
+x_offset = 0
 while True:
 
     for event in pygame.event.get():
@@ -32,18 +33,29 @@ while True:
 
     keys_pressed = pygame.key.get_pressed()
 
+    # jumping
     if keys_pressed[pygame.K_SPACE] and not jumping:
         jumping = True
         start_rect = mario_rect
         Y_VELOCITY = JUMP_HEIGHT
-    elif keys_pressed[pygame.K_LEFT]:
-        i -= 4 if keys_pressed[pygame.K_LSHIFT] else 1
+    
+    # moving left/right
+    if keys_pressed[pygame.K_LEFT]:
+        speed = -1
     elif keys_pressed[pygame.K_RIGHT]:
-        i += 4 if keys_pressed[pygame.K_LSHIFT] else 1
+        speed = +1
+    else:
+        speed = 0
+            
+    # faster speed mode
+    if keys_pressed[pygame.K_LSHIFT]:
+        speed *= 4 
     
     # While loop piirtää taustan kapeista suikaleista
     # jotta voidaan scrollata left/right
-    x = -(i % bg_width)
+    x_offset += speed
+    x = -(x_offset % bg_width)
+    mario_rect = mario_rect.move(speed / 2, 0)    
     while x < 800:
         SCREEN.blit(BACKGROUND, (x, 0))
         x += bg_width
@@ -58,6 +70,8 @@ while True:
     
     if jumping:
         SCREEN.blit(JUMPING_SURFACE, mario_rect)
+    elif abs(speed) > 1:
+        SCREEN.blit(MARIO_RUNNING, mario_rect)  
     else:
         SCREEN.blit(STANDING_SURFACE, mario_rect)
         
