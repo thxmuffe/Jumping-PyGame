@@ -3,11 +3,13 @@ import sys
 
 pygame.init()
 
+SCREEN_W = 600
+SCREEN_H = 600
 CLOCK = pygame.time.Clock()
-SCREEN = pygame.display.set_mode((800, 800))
+SCREEN = pygame.display.set_mode((SCREEN_W, SCREEN_H))
 pygame.display.set_caption("Jumping in PyGame")
 
-X_POSITION, Y_POSITION = 400, 660
+X_POSITION, Y_POSITION = SCREEN_W / 2, SCREEN_H - 140 * SCREEN_H / 800
 
 jumping = False
 
@@ -20,12 +22,15 @@ MARIO_RUNNING = pygame.transform.scale(pygame.image.load("assets/mario_running.p
 mario_rect = STANDING_SURFACE.get_rect(center=(X_POSITION, Y_POSITION))
 JUMPING_SURFACE = pygame.transform.scale(pygame.image.load("assets/mario_jumping.png"), (48, 64))
 BACKGROUND = pygame.image.load("assets/background.png")
+BACKGROUND =pygame.transform.scale(BACKGROUND, (SCREEN_W, SCREEN_H))
 
 bg_width = BACKGROUND.get_width()
 
 x_offset = 0
 while True:
 
+    speed = 1
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -44,8 +49,7 @@ while True:
         speed = -1
     elif keys_pressed[pygame.K_RIGHT]:
         speed = +1
-    else:
-        speed = 0
+        
             
     # faster speed mode
     if keys_pressed[pygame.K_LSHIFT]:
@@ -56,7 +60,8 @@ while True:
     x_offset += speed
     x = -(x_offset % bg_width)
     mario_rect = mario_rect.move(speed / 2, 0)    
-    while x < 800:
+
+    while x < SCREEN_W:
         SCREEN.blit(BACKGROUND, (x, 0))
         x += bg_width
     
